@@ -52,6 +52,64 @@ describe('heroesComponent (deep test)',()=>{
        {
         expect(HeroComponentDEs[i].componentInstance.hero).toEqual(HEROES[i]);
        }
+    });
+
+//trigger events on elements (option 1)
+    // it(`should call heroesComponent(parent) delete method 
+    // when heroComponent(child) delete button clicked`,()=>{
+    //     spyOn(fixture.componentInstance,'delete')
+    //     mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    //     fixture.detectChanges();
+
+    //     const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    //     heroComponents[1].query(By.css('button'))
+    //     .triggerEventHandler('click',{stopPropagation:()=>{}});
+
+    //     expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[1]);
+
+    // })
+
+//emitting events from children (option 2)
+    // it(`should call heroesComponent(parent) delete method 
+    // when heroComponent(child) delete button clicked`,()=>{
+    //     spyOn(fixture.componentInstance,'delete')
+    //     mockHeroService.getHeroes.and.returnValue(of(HEROES));
+    //     fixture.detectChanges();
+
+    //     const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+    //     (<HeroComponent>heroComponents[1].componentInstance).delete.emit();
+
+    //     expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[1]);
+
+    // })
+
+//raising events on child directive<app-hero> (option 3)
+    it(`should call heroesComponent(parent) delete method 
+    when heroComponent(child) delete button clicked`,()=>{
+        spyOn(fixture.componentInstance,'delete')
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+
+        const heroComponents = fixture.debugElement.queryAll(By.directive(HeroComponent));
+        heroComponents[1].triggerEventHandler('delete',null);
+
+        expect(fixture.componentInstance.delete).toHaveBeenCalledWith(HEROES[1]);
+    })
+
+    it('should add new hero to the hero list when add button is clicked',()=>{
+        mockHeroService.getHeroes.and.returnValue(of(HEROES));
+        fixture.detectChanges();
+        const name ="Thor";
+        mockHeroService.addHero.and.returnValue(of({id:5, name: name, strength:440}));
+        const inputEl = fixture.debugElement.query(By.css('input')).nativeElement;
+        const addButton = fixture.debugElement.queryAll(By.css('button'))[0];
+
+        inputEl.value = name;
+        addButton.triggerEventHandler('click',null);
+        fixture.detectChanges();
+        
+        const textContentDE = fixture.debugElement.query(By.css('ul')).nativeElement.textContent;
+        expect(textContentDE).toContain(name);
     })
  
 })
