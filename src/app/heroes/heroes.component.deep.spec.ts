@@ -32,7 +32,7 @@ describe('heroesComponent (deep test)',()=>{
                 //using long hand syntax because if heroservice called then it will prove mockheroservice
                 {provide: HeroService, useValue: mockHeroService} 
             ],
-           // schemas:[NO_ERRORS_SCHEMA] (to ignore associated template)
+            schemas:[NO_ERRORS_SCHEMA] //(to ignore associated template)
         })
        //creating fixture of component
         fixture = TestBed.createComponent(HeroesComponent);
