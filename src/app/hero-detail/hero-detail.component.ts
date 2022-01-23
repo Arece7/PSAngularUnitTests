@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 
 import { Hero }         from '../hero';
 import { HeroService }  from '../hero.service';
+import { resolve } from 'dns';
 
 @Component({
   selector: 'app-hero-detail',
@@ -33,8 +34,38 @@ export class HeroDetailComponent implements OnInit {
     this.location.back();
   }
 
- save(): void {
-    this.heroService.updateHero(this.hero)
-      .subscribe(() => this.goBack());
-  }
+//  save(): void {
+//     debounce(()=>{
+//     this.heroService.updateHero(this.hero)
+//     .subscribe(() => this.goBack());
+//     },250,false)();
+//   }
+
+save(): void {
+  someThirdPartyPromise().then(()=>{
+  this.heroService.updateHero(this.hero)
+  .subscribe(() => this.goBack());
+  });
+}
+}
+
+function someThirdPartyPromise(){
+  return new Promise((resolve)=>{
+    resolve(null);
+  });
+}
+
+  function debounce(func,wait,immediate){
+    var timeOut;
+    return function() {
+      var context = this, args = arguments;
+      var later = function(){
+        timeOut = null;
+        if(!immediate) func.apply(context,args)
+      };
+      var callNow = immediate && !timeOut;
+      clearTimeout(timeOut);
+      timeOut = setTimeout(later,wait);
+      if(callNow) func.apply(context,args) 
+       }
 }

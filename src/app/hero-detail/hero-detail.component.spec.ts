@@ -1,5 +1,5 @@
 import { Location } from "@angular/common";
-import { ComponentFixture, TestBed } from "@angular/core/testing"
+import { ComponentFixture, fakeAsync, flush, TestBed, tick, waitForAsync } from "@angular/core/testing"
 import { FormsModule } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router"
 import { of } from "rxjs";
@@ -35,4 +35,27 @@ describe('hero-detail Component',()=>{
 
         expect(textContent).toContain('THOR');
     })
+    //to handle async calls
+    it('should call updateHero when save is called',fakeAsync(()=>{
+        mockHeroservice.updateHero.and.returnValue(of({}));
+        fixture.detectChanges();
+
+        fixture.componentInstance.save();
+        //tick(250); use to fast forward the time by 250ms
+        flush(); //excute all pending task by fast-forwarding the time when don't know how long we have to wait
+
+        expect(mockHeroservice.updateHero).toHaveBeenCalled();
+    }))
+
+     //to handle promise specificly(fakeasync is a better option)
+    //  it('should call updateHero when save is called',waitForAsync(()=>{
+    //     mockHeroservice.updateHero.and.returnValue(of({}));
+    //     fixture.detectChanges();
+
+    //     fixture.componentInstance.save();
+         
+    //     fixture.whenStable().then(()=>{
+    //     expect(mockHeroservice.updateHero).toHaveBeenCalled();
+    //  })
+    // }))
 })
